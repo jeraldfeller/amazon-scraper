@@ -11,6 +11,6 @@ define('DB_NAME', 'amz_url_tool');
 define('DB_HOST', 'localhost');
 define('DB_DSN', 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME .'');
 
-define('ROOT', '/var/www/html/am/');
+define('ROOT', '/var/www/html/am/amazon-scraper/');
 //define('ROOT', '../')
 ?>
