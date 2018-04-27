@@ -44,7 +44,7 @@ class Scraper
       ));
       $url = 'http://51.15.193.78/am/api/api.php?action=insert-rescan&'.$param;
 
-      curlTo($url);
+      $this->curlTo($url);
       return true;
     }
 
@@ -123,8 +123,8 @@ foreach($content as $row){
     }
 
     public function reset(){
-      $url = 'http://51.15.193.78/am/api/api.php?action=reset'
-      curlTo($url);
+      $url = 'http://51.15.193.78/am/api/api.php?action=reset';
+      $this->curlTo($url);
       return true;
     }
 
@@ -196,8 +196,9 @@ public function getRescanSuccessAsin(){
       $data['table'] = $table;
       $param = http_build_query($data);
       $url = 'http://51.15.193.78/am/api/api.php?action=record-data&'.$param;
-      curlTo($url);
+      $this->curlTo($url);
       return true;
+    }
 
 
 public function recordDataMain($data, $table){
@@ -275,7 +276,7 @@ public function recordDataMain($data, $table){
     public function updateAsin($data){
       $param = http_build_query($data);
       $url = 'http://51.15.193.78/am/api/api.php?action=update-asin&'.$param;
-      curlTo($url);
+      $this->curlTo($url);
       return true;
     }
 
