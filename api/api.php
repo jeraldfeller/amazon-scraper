@@ -11,6 +11,30 @@ switch ($_GET['action']) {
     $data = $scraper->getAsinNew($table, $limit);
     echo json_encode($data);
     break;
+
+  case 'update-asin':
+    $data = $_GET;
+    $scraper->updateAsinMain(array(
+      'id' => $data['id'],
+      'table' => $data['table'],
+      'success' => $data['success'],
+      'failed_message' => $data['failed_message']
+      ));
+    break;
+
+  case 'insert-rescan':
+    $data = $_GET;
+    $id = $data['id'];
+    $table = $data['table'];
+    $asin = $data['asin'];
+    $locale = $data['locale'];
+    $scraper->recordNotFoundAsinMain($id, $table, $asin, $locale);
+    break;
+
+  case 'record-data':
+    $data = $_GET;
+    $scraper->recordDataMain($data, $data['table']);
+    break;
 }
 
 ?>

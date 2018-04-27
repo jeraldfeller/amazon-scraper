@@ -31,6 +31,24 @@ class Scraper
     }
 
     public function recordNotFoundAsin($id, $table, $asin, $locale){
+	     $this->updateAsin(array(
+            'id' => $id,
+            'table' => $table,
+            'success' => 1,
+            'failed_message' => 'item not found'
+        ));
+      $param = http_build_query(array(
+          'id' => $id,
+          'asin' => $asin,
+          'locale' => $locale
+      ));
+      $url = 'http://51.15.193.78/am/api/api.php?action=insert-rescan&'.$param;
+
+      curlTo($url);
+      return true;
+    }
+
+    public function recordNotFoundAsinMain($id, $table, $asin, $locale){
 	$this->updateAsin(array(
             'id' => $id,
             'table' => $table,
@@ -168,7 +186,15 @@ public function getRescanSuccessAsin(){
         return $content;
     }
 
-public function recordData($data, $table){
+    public function recordData($data, $table){
+      $data['table'] = $table;
+      $param = http_build_query($data);
+      $url = 'http://51.15.193.78/am/api/api.php?action=record-data&'.$param;
+      curlTo($url);
+      return true;
+    
+
+public function recordDataMain($data, $table){
         $pdo = $this->getPdo();
         if($table == 'rescan_asin_tbl'){
           $sql = 'UPDATE `product_tbl` SET `bb_seller` = "'. addslashes(htmlentities($data['bb_seller'])) .'",
@@ -239,13 +265,23 @@ public function recordData($data, $table){
         }
         return true;
     }
+
     public function updateAsin($data){
+      $param = http_build_query($data);
+      $url = 'http://51.15.193.78/am/api/api.php?action=update-asin&'.$param;
+      curlTo($url);
+      return true;
+    }
+
+
+    public function updateAsinMain($data){
       $pdo = $this->getPdo();
       $sql = 'UPDATE `'.$data['table'].'` SET `completed` = 1, `success` = '.$data['success'].', `failed_message` = "' . $data['failed_message'] . '" WHERE `id` = '.$data['id'].'';
 
       $stmt = $pdo->prepare($sql);
       $stmt->execute();
     }
+
 
     public function updateRescanAsin($id){
       $pdo = $this->getPdo();
@@ -355,6 +391,24 @@ $proxy = array('78.157.213.48:3128',
 return $proxy[mt_rand(0,34)];
     }
 
+    public function curlTo($url){
+      $curl = curl_init();
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => $url,
+          CURLOPT_RETURNTRANSFER => true,
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+          echo array();
+        } else {
+          echo $response;
+        }
+    }
     public function getPdo()
     {
         if (!$this->db_pdo)

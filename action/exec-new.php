@@ -1,7 +1,7 @@
 <?php
 set_time_limit(0);
 //require '../Model/Init.php';
-require '/var/www/html/am/Model/Init.php';
+require '/var/www/html/am/amazon-scraper/Model/Init.php';
 require ROOT . '/Model/Scraper.php';
 require ROOT . '/Model/simple_html_dom.php';
 
@@ -13,8 +13,7 @@ if(isset($_GET['action'])){
     $table = ($action == 'asin' ? 'asin_tbl' : 'asin_link_tbl');
     $data = json_decode($scraper->getAsin(), true);
 //$data = array();
-var_dump(count($data));
-/*
+
     $rowCount = 0;
     $context = stream_context_create(array(
         'http' => array(
@@ -415,7 +414,7 @@ if($isPantry){
         }
     }
 }
-*/
+
 
 }
 
