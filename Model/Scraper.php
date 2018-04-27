@@ -14,7 +14,7 @@ class Scraper
 
       return true;
     }
-	
+
     public function getProductTbl(){
       $pdo = $this->getPdo();
         $sql = 'SELECT *
@@ -42,7 +42,7 @@ class Scraper
       $stmt = $pdo->prepare($sql);
       $stmt->execute();
       if(!$stmt->fetch(PDO::FETCH_ASSOC)){
-      
+
       $sql = 'INSERT INTO `rescan_asin_tbl`
               (`asin`, `locale`) VALUES ("'.$asin.'", "'.$locale.'")';
       $stmt = $pdo->prepare($sql);
@@ -61,19 +61,23 @@ class Scraper
       return true;
     }
 
-    public function getAsin($table, $limit){
-      $pdo = $this->getPdo();
-        $sql = 'SELECT *
-                FROM `'.$table.'`
-                ';
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute();
-        $content = array();
-        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-          $content[] = $row;
-        }
+    public function getAsin(){
+      $curl = curl_init();
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "http://51.15.193.78/am/api/api.php?action=get-asin",
+          CURLOPT_RETURNTRANSFER => true,
+        ));
 
-        return $content;
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+          echo array();
+        } else {
+          echo $response;
+        }
     }
 
 public function getAsinNew($table, $limit){
@@ -238,7 +242,7 @@ public function recordData($data, $table){
     public function updateAsin($data){
       $pdo = $this->getPdo();
       $sql = 'UPDATE `'.$data['table'].'` SET `completed` = 1, `success` = '.$data['success'].', `failed_message` = "' . $data['failed_message'] . '" WHERE `id` = '.$data['id'].'';
-	echo $sql;
+
       $stmt = $pdo->prepare($sql);
       $stmt->execute();
     }
@@ -267,7 +271,7 @@ public function deleteAsin($asin){
       $sql = 'DELETE FROM `asin_tbl` WHERE `asin` = "'.$asin.'"';
       $stmt = $pdo->prepare($sql);
       $stmt->execute();
-    }	
+    }
 
 public function curlProxy($url, $locale){
         if($locale == 'es'){

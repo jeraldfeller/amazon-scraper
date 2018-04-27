@@ -11,10 +11,10 @@ if(isset($_GET['action'])){
     $action = $_GET['action'];
     $limit = 5;
     $table = ($action == 'asin' ? 'asin_tbl' : 'asin_link_tbl');
-    $data = $scraper->getAsinNew($table, $limit);
+    $data = json_decode($scraper->getAsin(), true);
 //$data = array();
-//var_dump(count($data));
-
+var_dump(count($data));
+/*
     $rowCount = 0;
     $context = stream_context_create(array(
         'http' => array(
@@ -54,7 +54,7 @@ if(isset($_GET['action'])){
 
                   if($html != false){
                       $price = $html->find('#priceblock_ourprice', 0);
-			  $priceSellPrice = $html->find('#priceblock_saleprice', 0);                  
+			  $priceSellPrice = $html->find('#priceblock_saleprice', 0);
     $availability = $html->find('#availability_feature_div', 0);
                       $regionalAvailability = $html->find('#regionalAvailability_feature_div', 0);
                       $shippingFee = $html->find('.shipping3P', 0);
@@ -62,7 +62,7 @@ if(isset($_GET['action'])){
                       $shippingMessage = $html->find('#price-shipping-message', 0);
                       $bbSeller = $html->find('#merchant-info', 0);
                       if($bbSeller){
-			
+
 			$bbSellerLink = $bbSeller->find('a', 0);
 }else{
 $bbSellerLink = false;
@@ -84,8 +84,8 @@ if(!$isPantry){
                           $rankNo = $salesRankValue->find('.zg_hrsr_rank', 0)->plaintext;
                           $rankNo = preg_replace("/[^0-9]/", '', $rankNo);
                           $salesRankValue = $salesRankValue->find('.zg_hrsr_ladder', 0)->plaintext;
-                          
-                        }			
+
+                        }
 $rankText = str_replace($rankNo, '', $salesRankValue);
 			$rankText = preg_replace('/[0-9]+/', '', $rankText);
 if($locale == 'fr'){
@@ -97,7 +97,7 @@ if($locale == 'fr'){
                         }
                         if($locale == 'es'){
                             $rankText = str_replace('nº en ', '', $rankText);
-                        }                        
+                        }
 $rankText = str_replace('n.', '', $rankText);
                         $rankText = str_replace('Nr.', '', $rankText);
                         $rankText = str_replace('in ', '', $rankText);
@@ -129,7 +129,7 @@ if($price){
                           $price = 0;
                           $currency = '-';
                         }
-                        
+
                       }
                       if($availability){
                           $availability = trim($html->find('#availability_feature_div', 0)->plaintext);
@@ -179,7 +179,7 @@ if($isPantry){
                           }else{
                             $bbSeller = '-';
                           }
-                      
+
 }
 
                       if($bbSellerLink){
@@ -415,8 +415,8 @@ if($isPantry){
         }
     }
 }
+*/
 
 }
 
 ?>
-

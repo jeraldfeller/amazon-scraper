@@ -9,7 +9,7 @@ switch ($_GET['action']) {
     $limit = 1;
     $table = 'asin_tbl';
     $data = $scraper->getAsinNew($table, $limit);
-    echo json_encode($data)
+    echo json_encode($data);
     break;
 }
 
