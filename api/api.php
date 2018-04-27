@@ -35,6 +35,10 @@ switch ($_GET['action']) {
     $data = $_GET;
     $scraper->recordDataMain($data, $data['table']);
     break;
+
+  case 'reset'
+    $scraper->resetMain();
+    break;
 }
 
 ?>

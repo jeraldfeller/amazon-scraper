@@ -123,6 +123,12 @@ foreach($content as $row){
     }
 
     public function reset(){
+      $url = 'http://51.15.193.78/am/api/api.php?action=reset'
+      curlTo($url);
+      return true;
+    }
+
+    public function resetMain(){
       $pdo = $this->getPdo();
       $sql = 'UPDATE `asin_tbl` SET `completed` = 0';
       $stmt = $pdo->prepare($sql);
@@ -192,7 +198,7 @@ public function getRescanSuccessAsin(){
       $url = 'http://51.15.193.78/am/api/api.php?action=record-data&'.$param;
       curlTo($url);
       return true;
-    
+
 
 public function recordDataMain($data, $table){
         $pdo = $this->getPdo();
