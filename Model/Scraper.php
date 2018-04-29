@@ -92,9 +92,9 @@ class Scraper
         curl_close($curl);
 
         if ($err) {
-          echo array();
+          return array();
         } else {
-          echo $response;
+          return $response;
         }
     }
 
@@ -345,19 +345,52 @@ public function curlProxy($url, $locale){
           $port = 22225;
           $ip = 'it';
         }
-echo 'IP: ' . $ip;
-        $user_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
-        $session = mt_rand();
-        $super_proxy = 'zproxy.lum-superproxy.io';
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_PROXY, "http://$super_proxy:$port");
-        curl_setopt($curl, CURLOPT_PROXYUSERPWD, "$username-dns-local-session-$session:$password");
-        $result = curl_exec($curl);
-        curl_close($curl);
-        return array('html' => $result, 'ip' => $ip);
+        if($locale == 'uk'){
+          $result = $this->getProxyUk($url);
+        }else{
+          $user_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
+          $session = mt_rand();
+          $super_proxy = 'zproxy.lum-superproxy.io';
+          $curl = curl_init($url);
+          curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);
+          curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+          curl_setopt($curl, CURLOPT_PROXY, "http://$super_proxy:$port");
+          curl_setopt($curl, CURLOPT_PROXYUSERPWD, "$username-dns-local-session-$session:$password");
+          $result = curl_exec($curl);
+          curl_close($curl);
+        }
+          return array('html' => $result, 'ip' => $ip);
       }
+
+
+
+    public function getProxyUk($url){
+      $proxy = array(
+        '77.75.126.214:8800',
+        '77.75.126.144:8800',
+        '31.132.1.191:8800',
+        '31.132.1.245:8800',
+        '94.46.184.249:8800',
+        '94.46.184.80:8800',
+        '81.92.194.178:8800',
+        '81.92.194.161:8800',
+        '81.92.194.151:8800',
+        '81.92.194.204:8800'
+      );
+
+      $curl = curl_init();
+    	curl_setopt($curl, CURLOPT_URL, $url);
+    	if ($proxy != NULL) {
+    		curl_setopt($curl, CURLOPT_PROXY, $proxy[mt_rand(0,9)]);
+    	}
+    	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+    	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+    	curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+    	$contents = curl_exec($curl);
+    	curl_close($curl);
+    	return $contents;
+
+    }
    public function getProxy(){
 $proxy = array('78.157.213.48:3128',
 '81.92.195.18:3128',
@@ -411,9 +444,9 @@ return $proxy[mt_rand(0,34)];
         curl_close($curl);
 
         if ($err) {
-          echo array();
+          return array();
         } else {
-          echo $response;
+          return $response;
         }
     }
     public function getPdo()
