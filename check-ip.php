@@ -53,7 +53,7 @@ function curlProxy($url, $locale){
     curl_setopt($curl, CURLOPT_PROXY, "http://$super_proxy:$port");
     curl_setopt($curl, CURLOPT_PROXYUSERPWD, "$username-remote-local-session-$session:$password");
      curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
-    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);    
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
 $result = curl_exec($curl);
     curl_close($curl);
     return array('html' => $result, 'ip' => $it);
@@ -75,4 +75,3 @@ function curlProxyInstantProxy($url, $ip){
 }
 
 ?>
-
