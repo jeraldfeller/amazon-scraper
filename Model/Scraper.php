@@ -195,10 +195,11 @@ public function getRescanSuccessAsin(){
     public function recordData($data, $table){
       $data['table'] = $table;
       $param = http_build_query($data);
-      $url = 'http://51.15.193.78/am/api/api.php?action=record-data&'.$param;
-      $this->curlTo($url);
-      return true;
-    }
+      $url = 'http://51.15.193.78/am/api/api.php?action=record-data';
+	$return = $this->curlTo($url, $data);
+var_dump($return);      
+return $return;    
+}
 
 
 public function recordDataMain($data, $table){
@@ -275,8 +276,8 @@ public function recordDataMain($data, $table){
 
     public function updateAsin($data){
       $param = http_build_query($data);
-      $url = 'http://51.15.193.78/am/api/api.php?action=update-asin&'.$param;
-      $this->curlTo($url);
+      $url = 'http://51.15.193.78/am/api/api.php?action=update-asin';
+      $this->curlTo($url, $data);
       return true;
     }
 
@@ -317,97 +318,57 @@ public function deleteAsin($asin){
     }
 
 public function curlProxy($url, $locale){
-        if($locale == 'es'){
-          $username = 'lum-customer-hl_ea0ddc1c-zone-amazon_es';
-          $password = 'g8nay06hflak';
-          $port = 22225;
-          $ip = 'es';
-        }else if($locale == 'fr'){
-          $username = 'lum-customer-hl_ea0ddc1c-zone-amazon_fr';
-          $password = 'ie58zfcu3nwq';
-          $port = 22225;
-	  $ip = 'fr';
-        }else if($locale == 'de'){
-          $username = 'lum-customer-hl_ea0ddc1c-zone-amazon_de';
-          $password = '4moz3kct1t9i';
-          $port = 22225;
-	  $ip = 'de';
-        }else if($locale == 'uk'){
-          $username = 'lum-customer-hl_ea0ddc1c-zone-amazon_uk';
-          $password = 'zk9ernpu2nhu';
-          $port = 22225;
-	  $ip = 'uk';
-        }
+          $result = $this->getBestProxyList($url, $locale);
+          return array('html' => $result['html'], 'ip' => $result['ip']);
+}
 
-        else{
-          $username = 'lum-customer-hl_ea0ddc1c-zone-amazon_it';
-          $password = 'jvvhns7shpyg';
-          $port = 22225;
-          $ip = 'it';
-        }
-
-        
-        if($locale == 'uk' || $locale == 'fr' || $locale == 'de'){
-          $result = $this->getProxyList($url, $locale);
-        }else{
-          $user_agent = 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36';
-          $session = mt_rand();
-          $super_proxy = 'zproxy.lum-superproxy.io';
-          $curl = curl_init($url);
-          curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);
-          curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-          curl_setopt($curl, CURLOPT_PROXY, "http://$super_proxy:$port");
-          curl_setopt($curl, CURLOPT_PROXYUSERPWD, "$username-dns-local-session-$session:$password");
-          $result = curl_exec($curl);
-          curl_close($curl);
-        }
-          return array('html' => $result, 'ip' => $ip);
-      }
-
-
-
-    public function getProxyList($url, $locale){
+public function getProxyList($url, $locale){
       switch($locale){
         case 'uk':
             $proxy = array(
-              '31.132.1.191:3128',
-              '94.46.184.80:3128',
-              '81.92.194.161:3128',
-              '31.132.1.245:3128',
-              '81.92.194.204:3128',
-              '81.92.194.151:3128',
-              '81.92.194.178:3128',
-              '94.46.184.249:3128',
-              '77.75.126.214:3128',
-              '77.75.126.144:3128'
+              '77.75.126.214:8800',
+              '77.75.126.144:8800',
+              '31.132.1.191:8800',
+              '31.132.1.245:8800',
+              '94.46.184.249:8800',
+              '94.46.184.80:8800',
+              '81.92.194.178:8800',
+              '81.92.194.161:8800',
+              '81.92.194.151:8800',
+              '81.92.194.204:8800'
             );
           break;
         case 'fr':
           $proxy = array(
-            '185.167.68.22:3128',
-            '185.167.68.207:3128',
-            '185.167.68.88:3128',
-            '185.167.68.60:3128',
-            '185.167.68.46:3128',
-            '185.167.69.163:3128',
-            '185.167.69.148:3128',
-            '185.167.69.135:3128',
-            '185.167.69.229:3128',
-            '185.167.69.111:3128'
+            '185.167.68.22:8800',
+            '185.167.68.207:8800',
+            '185.167.68.88:8800',
+            '185.167.68.60:8800',
+            '185.167.68.46:8800',
+            '185.167.69.163:8800',
+            '185.167.69.148:8800',
+            '185.167.69.135:8800',
+            '185.167.69.229:8800',
+            '185.167.69.111:8800'
           );
           break;
         case 'de':
         $proxy = array(
-          '185.167.68.22:3128',
-          '185.167.68.207:3128',
-          '185.167.68.88:3128',
-          '185.167.68.60:3128',
-          '185.167.68.46:3128',
-          '185.167.69.163:3128',
-          '185.167.69.148:3128',
-          '185.167.69.135:3128',
-          '185.167.69.229:3128',
-          '185.167.69.111:3128'
+          '185.170.212.96:8800',
+          '185.170.212.176:8800',
+          '185.170.212.223:8800',
+          '185.170.213.219:8800',
+          '185.170.213.210:8800',
+          '185.170.213.220:8800',
+          '185.170.214.177:8800',
+          '185.170.214.192:8800',
+          '185.170.214.98:8800',
+          '185.170.215.148:8800',
+          '185.170.215.228:8800',
+          '185.170.215.7:8800',
+          '185.170.215.220:8800',
+          '185.170.215.174:8800',
+          '185.170.215.20:8800'
         );
           break;
       }
@@ -416,7 +377,7 @@ public function curlProxy($url, $locale){
       $curl = curl_init();
     	curl_setopt($curl, CURLOPT_URL, $url);
     	if ($proxy != NULL) {
-    		curl_setopt($curl, CURLOPT_PROXY, $proxy[mt_rand(0,9)]);
+    		curl_setopt($curl, CURLOPT_PROXY, $proxy[mt_rand(0, count($proxy) - 1)]);
     	}
     	curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
     	curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
@@ -466,10 +427,90 @@ $proxy = array('78.157.213.48:3128',
 return $proxy[mt_rand(0,34)];
     }
 
-    public function curlTo($url){
+public function getBestProxyList($url, $locale){
+      //IT
+      switch($locale){
+        case 'it':
+          $port = 43848;
+          $proxy = array(
+            '213.184.109.174',
+            '213.184.109.248',
+            '213.184.110.103',
+            '213.184.110.9',
+            '213.184.112.84',
+            '213.184.114.120'
+          );
+          break;
+        case 'fr':
+          $port = 56362;
+          $proxy = array(
+            '79.137.58.75',
+            '79.137.58.84',
+            '79.137.58.87',
+            '79.137.58.88'
+          );
+          break;
+        case 'de':
+          $proxy = 56362;
+          $proxy = array(
+            '185.246.212.227',
+            '185.246.213.219',
+            '185.246.214.221',
+            '185.246.215.224'
+          );
+          break;
+        case 'uk':
+          $proxy = 56362;
+          $proxy = array(
+            '78.157.195.45',
+            '78.157.203.174',
+            '5.101.144.109',
+            '78.157.202.192'
+          );
+          break;
+        case 'es':
+        $port = 56362;
+        $proxy = array(
+          '79.137.58.75',
+          '79.137.58.84',
+          '79.137.58.87',
+          '79.137.58.88',
+          '185.246.212.227',
+          '185.246.213.219',
+          '185.246.214.221',
+          '185.246.215.224',
+          '78.157.195.45',
+          '78.157.203.174',
+          '5.101.144.109',
+          '78.157.202.192'
+        );
+          break;
+      }
+
+      $ip = 'it';
+echo $url;
+echo '>';
+echo $port;
+      $curl = curl_init();
+      curl_setopt($curl, CURLOPT_TIMEOUT, 20);
+      curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
+      curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($curl, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
+      curl_setopt($curl, CURLOPT_PROXY, '213.184.109.174');
+      curl_setopt($curl, CURLOPT_PROXYPORT, '43848');
+      curl_setopt($curl, CURLOPT_PROXYUSERPWD, 'amznscp:dfab7c358');
+      curl_setopt($curl, CURLOPT_URL, '"'.$url.'"');
+      $content = curl_exec($curl);
+
+      return array('html' => $content, 'ip' => $ip);
+    }
+
+    public function curlTo($url, $post){
       $curl = curl_init();
         curl_setopt_array($curl, array(
           CURLOPT_URL => $url,
+		CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTFIELDS => $post,
           CURLOPT_RETURNTRANSFER => true,
         ));
 

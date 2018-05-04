@@ -19,7 +19,8 @@ if(isset($_GET['action'])){
         'http' => array(
             'header' => array('User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201'),
         ),
-    ));
+   ));
+//var_dump($data);
     foreach($data as $row){
         $id = $row['id'];
         if($action == 'asin'){
@@ -222,6 +223,7 @@ if($isPantry){
                       //echo 'Is A Plus: ' . $aPlus . '<br>';
                       //echo 'a Plus Description: ' . $aPlusDescription . '<br>';
                       //echo '<hr>';
+           echo $asin;
 			if($bbSeller == '-' && $bbSellerLink == '-' && $price == 0 && $availability == '-' && $currency == '-' && $deliveryMessage == '-' && $shippingFee == '-' && $shippingMessage == '-' && $availability == '-'){
                         $scraper->recordNotFoundAsin($id, $table, $asin, $locale);
                         $scraper->updateAsin(array(
@@ -230,26 +232,29 @@ if($isPantry){
                       'success' => 0,
                       'failed_message' => 'item not found'
                   ));
+echo 'fail';
                       }else{
-                      $data = array(
+echo 'pass';
+$data = array(
                           'id' => $id,
                           'asin' => $asin,
                           'locale' => $locale,
-                          'bb_seller' => $bbSeller,
-                          'bb_seller_link' => $bbSellerLink,
-                          'price' => $price,
-                          'currency' => $currency,
-                          'delivery_message' => $deliveryMessage,
-                          'shipping_price' => $shippingFee,
-                          'shipping_message' => $shippingMessage,
-                          'availability' => $availability,
-                          'description' => $description,
-                          'is_aplus' => $aPlus,
-                          'aplus_description' => $aPlusDescription,
-	                   'rank_no' => $rankNo,
-                          'rank_text' => $rankText,
-                           'ip' => $ip
+                          'bb_seller' => addslashes($bbSeller),
+                          'bb_seller_link' => addslashes($bbSellerLink),
+                          'price' => addslashes($price),
+                          'currency' => addslashes($currency),
+                          'delivery_message' => addslashes($deliveryMessage),
+                          'shipping_price' => addslashes($shippingFee),
+                          'shipping_message' => addslashes($shippingMessage),
+                          'availability' => addslashes($availability),
+                          'description' => addslashes($description),
+                          'is_aplus' => addslashes($aPlus),
+                          'aplus_description' => addslashes($aPlusDescription),
+	                   'rank_no' => addslashes($rankNo),
+                          'rank_text' => addslashes($rankText),
+                           'ip' => addslashes($ip)
                       );
+
 
                       $scraper->recordData($data, $table);
                       }
