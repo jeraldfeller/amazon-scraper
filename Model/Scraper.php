@@ -451,7 +451,7 @@ public function getBestProxyList($url, $locale){
           );
           break;
         case 'de':
-          $proxy = 56362;
+          $port = 56362;
           $proxy = array(
             '185.246.212.227',
             '185.246.213.219',
@@ -460,7 +460,7 @@ public function getBestProxyList($url, $locale){
           );
           break;
         case 'uk':
-          $proxy = 56362;
+          $port = 56362;
           $proxy = array(
             '78.157.195.45',
             '78.157.203.174',
@@ -487,19 +487,16 @@ public function getBestProxyList($url, $locale){
           break;
       }
 
-      $ip = 'it';
-echo $url;
-echo '>';
-echo $port;
+      $ip = $proxy[mt_rand(0,count($proxy) - 1)];
       $curl = curl_init();
       curl_setopt($curl, CURLOPT_TIMEOUT, 20);
       curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
       curl_setopt($curl, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);
-      curl_setopt($curl, CURLOPT_PROXY, '213.184.109.174');
-      curl_setopt($curl, CURLOPT_PROXYPORT, '43848');
+      curl_setopt($curl, CURLOPT_PROXY, $ip);
+      curl_setopt($curl, CURLOPT_PROXYPORT, $port);
       curl_setopt($curl, CURLOPT_PROXYUSERPWD, 'amznscp:dfab7c358');
-      curl_setopt($curl, CURLOPT_URL, '"'.$url.'"');
+      curl_setopt($curl, CURLOPT_URL, $url);
       $content = curl_exec($curl);
 
       return array('html' => $content, 'ip' => $ip);
