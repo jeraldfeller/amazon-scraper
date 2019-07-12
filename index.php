@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>AM Scraper</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" rel="stylesheet" type="text/css">
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
-  </head>
-  <body>
+<?php include('header.php');?>
       <div class="container container-fluid">
         <div class="row" style="margin-top: 25px;">
             <div class="col-md-12 text-center">
-              <h4>Import CSV File</h4>
+              <h4>Import CSV File</h4> <a href="proxies.php">edit proxies</a>
             </div>
             <div class="col-md-12" style="margin-top: 25px;"></div>
             <form id="importFile" class="form-inline col-md-12">
@@ -74,5 +65,4 @@
 
         });
       </script>
-  </body>
-</html>
+<?php include('footer.php');

@@ -351,68 +351,9 @@ public function deleteAsin($asin){
       $stmt->execute();
     }
 
-public function curlProxyOLD($url, $locale){
+public function curlProxy($url, $locale){
           $result = $this->getBestProxyList($url, $locale);
           return array('html' => $result['html'], 'ip' => $result['ip']);
-}
-
-
-public function curlProxy($url, $locale){
-        if($locale == 'es'){
-          $ip = 'es';
-        }else if($locale == 'fr'){
-	        $ip = 'fr';
-        }else if($locale == 'de'){
-	        $ip = 'de';
-        }else if($locale == 'uk'){
-	        $ip = 'uk';
-        }
-        else{
-          $ip = 'it';
-        }
-// echo 'IP: ' . $ip;
-        $user_agent = 'Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.2) Gecko/20090729 Firefox/3.5.2 GTB5';
-        $configs = json_decode((file_get_contents(ROOT.'/proxies/config.json')));
-        $proxy_selected = $this->getProxy($ip);
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($curl, CURLOPT_ENCODING, '');
-        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($curl, CURLOPT_PROXY, explode(':',$proxy_selected)[0]);
-        curl_setopt($curl, CURLOPT_PROXYPORT, explode(':',$proxy_selected)[1]);
-        curl_setopt($curl, CURLOPT_PROXYUSERPWD, $configs->username.':'.$configs->password);
-        $result = curl_exec($curl);
-        curl_close($curl);
-        //if(!$result || strlen($result) == 6945){
-         // return $this->curlProxy($url,$locale);
-        //}
-        return array('html' => $result, 'ip' => $ip);
-      }
-   public function getProxy($location){
-        $data = '';
-         switch($location){
-           case 'it':
-               $data = file_get_contents(ROOT .'/proxies/it.txt');
-           break;
-           case 'uk':
-               $data = file_get_contents(ROOT . '/proxies/uk.txt');
-           break;
-           case 'fr':
-               $data = file_get_contents(ROOT . '/proxies/fr.txt');
-           break;
-           case 'de':
-                $data = file_get_contents(ROOT . '/proxies/de.txt');
-           break;
-           case 'es':
-                $data = file_get_contents(ROOT . '/proxies/es.txt');
-           break;
-         }
-
-       $delimiter = (strstr($data,',')!== false)?',':"\n";
-       $proxy = explode($delimiter,$data);
-
-    return $proxy[mt_rand(0,count($proxy)-1)];
 }
 
 public function getProxyList($url, $locale){
@@ -480,7 +421,7 @@ public function getProxyList($url, $locale){
     	return $contents;
 
     }
-   public function getProxyOLD(){
+   public function getProxy(){
 $proxy = array('78.157.213.48:3128',
 '81.92.195.18:3128',
 '185.170.212.223:3128',
@@ -521,18 +462,122 @@ return $proxy[mt_rand(0,34)];
     }
 
 public function getBestProxyList($url, $locale){
+      //IT
 
-    $proxy_selected = $this->getProxyFromLocation($locale);
-    $temp_proxy = explode(':',$proxy_selected);
 
+switch ($locale) {
+            case 'it':
+                $rnd = mt_rand(0, 1);
+                $port = [56362, 27658, 43848];
+                $proxy = [
+                    array(
+                        '196.16.184.161',
+                        '196.16.184.164',
+                        '196.16.246.59',
+                        '196.16.98.4',
+                        '196.16.99.2',
+                        '196.17.14.160',
+                        '196.17.15.155',
+                        '196.17.187.161',
+                        '196.17.220.236',
+                        '196.19.160.130',
+                        '196.19.161.128',
+                        '196.19.247.124'
+                    ), array(
+                        '196.16.98.5',
+                        '196.17.14.163',
+                        '196.17.15.148',
+                        '196.19.160.33',
+                        '196.19.162.33',
+                        '196.19.163.43'
+                    ),
+                    array(
+                        '196.16.184.165',
+                        '196.17.187.168',
+                        '196.17.220.4',
+                        '196.19.161.31',
+                        '196.19.246.13',
+                        '196.19.247.21'
+                    )
+                ];
+                $port = $port[$rnd];
+                $proxy = $proxy[$rnd];
+
+                break;
+            case 'de':
+                $port = 41413;
+                $proxy = array(
+                    '185.246.212.116',
+                    '185.246.213.105',
+                    '185.246.213.131',
+                    '185.246.214.107',
+                    '185.246.214.126',
+                    '185.246.215.15',
+                    '31.214.150.59',
+                    '31.214.150.94',
+                    '31.214.151.202',
+                    '37.10.110.92',
+                    '37.10.111.88',
+                    '37.10.68.203',
+                    '37.10.68.236',
+                    '37.10.69.144',
+                    '37.10.69.246',
+                    '46.251.230.52',
+                    '46.251.231.118',
+                    '46.251.232.230',
+                    '46.251.233.238',
+                    '46.251.233.24',
+                    '95.156.220.127',
+                    '95.156.220.167',
+                    '95.156.221.203',
+                    '95.156.221.47'
+                );
+                break;
+            case 'uk':
+                $port = 17843;
+$proxy = array(
+                    '196.17.114.114',
+                    '196.17.114.128',
+                    '196.17.115.100',
+                    '196.17.115.101',
+                    '196.18.158.222',
+                    '196.18.158.33',
+                    '196.18.159.99',
+                    '196.17.176.202',
+                    '196.17.177.229',
+                    '196.17.178.168',
+                    '196.17.179.72',
+		    '196.17.114.225',
+                    '196.17.115.211',
+                    '196.18.158.150',
+                    '196.18.159.204',
+                    '196.17.176.119',
+                    '196.17.177.124',
+                    '196.17.178.96',
+                    '196.17.179.129'
+                );                
+break;
+            case 'fr':
+                $port = 17843;
+                $proxy = array(
+                    '185.190.17.34',
+                    '196.16.96.5',
+                    '92.222.226.131',
+                    '5.196.245.141',
+                    '185.190.17.77'
+                );
+                break;
+        }      
+
+$ip = $proxy[mt_rand(0,count($proxy) - 1)];
       $curl = curl_init();
       curl_setopt($curl, CURLOPT_TIMEOUT, 20);
       curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
       curl_setopt($curl, CURLOPT_FOLLOWLOCATION, 1);
       curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
       curl_setopt($curl, CURLOPT_PROXYTYPE,CURLPROXY_HTTP);
-      curl_setopt($curl, CURLOPT_PROXY, $temp_proxy[0]);
-      curl_setopt($curl, CURLOPT_PROXYPORT, $temp_proxy[1]);
+      curl_setopt($curl, CURLOPT_PROXY, $ip);
+      curl_setopt($curl, CURLOPT_PROXYPORT, $port);
       curl_setopt($curl, CURLOPT_PROXYUSERPWD, 'amznscp:dfab7c358');
       curl_setopt($curl, CURLOPT_URL, $url);
       $content = curl_exec($curl);
@@ -540,38 +585,10 @@ $err = curl_error($curl);
 
         curl_close($curl);
 //var_dump($err);
-      return array('html' => $content, 'ip' => $temp_proxy[0]);
+      return array('html' => $content, 'ip' => $ip);
     }
 
-    public function getProxyFromLocation($location)
-    {
-
-        $data = '';
-        switch ($location) {
-            case 'it':
-                $data = file_get_contents(ROOT . '/proxies/it.txt');
-                break;
-            case 'uk':
-                $data = file_get_contents(ROOT . '/proxies/uk.txt');
-                break;
-            case 'fr':
-                $data = file_get_contents(ROOT . '/proxies/fr.txt');
-                break;
-            case 'de':
-                $data = file_get_contents(ROOT . '/proxies/de.txt');
-                break;
-            case 'es':
-                $data = file_get_contents(ROOT . '/proxies/es.txt');
-                print_r($data);
-                break;
-        }
-
-        $delimiter = (strstr($data, ',') !== false) ? ',' : "\n";
-        $proxy = explode($delimiter, $data);
-
-        return $proxy[mt_rand(0, count($proxy) - 1)];
-    }
-    public function curlTo($url, $post=[]){
+    public function curlTo($url, $post){
       $curl = curl_init();
         curl_setopt_array($curl, array(
           CURLOPT_URL => $url,

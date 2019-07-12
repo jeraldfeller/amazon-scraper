@@ -12,6 +12,7 @@ if(isset($_GET['action'])){
     $limit = 5;
     $table = ($action == 'asin' ? 'asin_tbl' : 'asin_link_tbl');
     $data = json_decode($scraper->getAsin(), true);
+   
 //$data = array();
 
     $rowCount = 0;
@@ -20,12 +21,14 @@ if(isset($_GET['action'])){
             'header' => array('User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; rv:2.2) Gecko/20110201'),
         ),
    ));
-//var_dump($data);
+//var_dump($data);die();
     foreach($data as $row){
         $id = $row['id'];
         if($action == 'asin'){
             $asin = $row['asin'];
+           //$asin = 'B07BTMW3TS';
             $locale = strtolower($row['locale']);
+	   // $locale = 'it';
             // Start Scraper
             // start fetch product link
             if($locale == 'uk'){
@@ -34,26 +37,38 @@ if(isset($_GET['action'])){
                 $domExt = '';
             }
             //$url = 'https://www.amazon.'.$domExt.$locale.'/s/field-keywords='.$asin.'';
-            $link = 'https://www.amazon.'.$domExt.$locale.'/dp/'.$asin.'';
+            $link = 'https://www.amazon.'.$domExt.$locale.'/dp/'.$asin.'?th=1&psc=1';
             try{
-                sleep(5);
+                sleep(15);
                 //  $htmlNew = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $scraper->delete_all_between('<head>', '</head>', trim(file_get_contents($link, false, $context))));
                 //$htmlData = file_get_contents($link, false, $context);
                 $htmlData = $scraper->curlProxy($link, $locale);
+				//print_r($htmlData);die('once');
 		$ip = $htmlData['ip'];
-   //           var_dump($htmlData);
+//             var_dump($htmlData);
                 if($htmlData){
-                  $htmlNew = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $scraper->delete_all_between('<head>', '</head>', trim($htmlData['html'])));
+//echo $htmlData['html'];
+                //  $htmlNew = preg_replace('#<script(.*?)>(.*?)</script>#is', '', $scraper->delete_all_between('<head>', '</head>', trim($htmlData['html'])));
 
-                  $myfile = fopen(ROOT . '/tmp/tmp.php', "w") or die("Unable to open file!");
-                  fwrite($myfile, $htmlNew);
-                  fclose($myfile);
+                  //$myfile = fopen(ROOT . '/tmp/tmp.php', "w") or die("Unable to open file!");
+                  //fwrite($myfile, $htmlNew);
+                  //fclose($myfile);
 
-                  $htmlNew = file_get_contents(ROOT  . '/tmp/tmp.php');
-                  $html = str_get_html($htmlNew);
-
-                  if($html != false){
+                  //$htmlNew = file_get_contents(ROOT  . '/tmp/tmp.php');
+                  //$html = str_get_html($htmlNew);
+                  $html = str_get_html($htmlData['html']);
+                  $myfile = fopen(ROOT . '/tmp/test.html', "w") or die("Unable to open file!");
+                    fwrite($myfile, $htmlData['html']);
+                    fclose($myfile); 
+                 if($html != false){
                       $price = $html->find('#priceblock_ourprice', 0);
+ if(!$price){
+                          $price = $html->find('#priceblock_dealprice', 0);
+                               if(!$price){
+                              $price = $html->find('.offer-price', 0);
+
+                          }
+                      }
 			  $priceSellPrice = $html->find('#priceblock_saleprice', 0);
     $availability = $html->find('#availability_feature_div', 0);
                       $regionalAvailability = $html->find('#regionalAvailability_feature_div', 0);
@@ -61,6 +76,7 @@ if(isset($_GET['action'])){
                       $deliveryMessage = $html->find('#ddmDeliveryMessage', 0);
                       $shippingMessage = $html->find('#price-shipping-message', 0);
                       $bbSeller = $html->find('#merchant-info', 0);
+//var_dump($bbSeller->innerText());
                       if($bbSeller){
 
 			$bbSellerLink = $bbSeller->find('a', 0);
@@ -69,10 +85,16 @@ $bbSellerLink = false;
 }
 $isPantry = $html->find('#pantryBadge');
   $salesRank = $html->find('#SalesRank', 0);
-
+//if(!$salesRank){
+  //    $salesRank = $html->find('.pdTab', 0);
+ // }
                       if($salesRank){
 if(!$isPantry){
                           $salesRankValue = $salesRank->find('.value', 0);
+                          if(!$salesRankValue){
+                                $salesRankValue = $salesRank;  
+                          }
+                       var_dump($salesRankValue->innerText()); 
                           $children = $salesRankValue->children; // get an array of children
                           foreach ($children AS $child) {
                               $child->outertext = ''; // This removes the element, but MAY NOT remove it from the original $myDiv
@@ -109,6 +131,7 @@ $rankText = str_replace('n.', '', $rankText);
 		$rankNo = '-';
 		$rankText = '-';
 }
+echo 'START Rank';
 echo $rankNo.'|';
 echo $rankText;
 
@@ -116,9 +139,15 @@ echo $rankText;
                       $aPlus = $html->find('#aplus', 0);
 
 if($price){
-                          $price = trim($html->find('#priceblock_ourprice', 0)->plaintext);
-                          $currency =  preg_replace('/[0-9,.]+/', '', $price);
-                          $price = preg_replace("/[^0-9,.]/", "", $price);
+           //               $price = trim($html->find('#priceblock_ourprice', 0)->plaintext);
+if(strpos($price, '£') > 0){
+                              $currency = '£';
+                          }elseif (strpos($price, 'EUR') > 0){
+                              $currency = 'EUR';
+                          }else{
+                              $currency =  preg_replace('/[0-9,.]+/', '', $price);
+                          }                          
+$price = preg_replace("/[^0-9,.]/", "", $price);
 
                       }else{
                         if($priceSellPrice){
@@ -150,7 +179,18 @@ if($price){
 
                       if($deliveryMessage){
                           $deliveryMessage = trim($deliveryMessage->plaintext);
-                      }else{
+                          switch ($locale){
+                    case 'it':
+                        $deliveryMessage = str_replace('&nbsp;', ' ', $deliveryMessage);
+                        break;
+                    case 'de':
+                        $deliveryMessage = str_replace('Siehe Details.', '', $deliveryMessage);
+                        break;
+                    case 'uk':
+                        $deliveryMessage = str_replace('Details', '', $deliveryMessage);
+                        break;
+                }                     
+ }else{
                           $deliveryMessage = '-';
                       }
 
@@ -162,6 +202,20 @@ if($price){
 
                       if($bbSeller){
                           $bbSeller = trim($bbSeller->plaintext);
+                         switch ($locale){
+                              case 'uk':
+                                  $bbSeller = str_replace('Gift-wrap available.', '', $bbSeller);
+                                  break;
+                              case 'it':
+                                  $bbSeller = str_replace('Confezione regalo disponibile.', '', $bbSeller);
+                                  break;
+                              case 'de':
+                                  $bbSeller = str_replace('Geschenkverpackung verf&uuml;gbar.', '', $bbSeller);
+                                  break;
+                              case 'fr':
+                                  $bbSeller = str_replace('Emballage cadeau disponible.', '', $bbSeller);
+                                  break;
+                          }
                       }else{
 if($isPantry){
                             if($locale == 'fr'){
@@ -209,21 +263,27 @@ if($isPantry){
                       }
 
                       echo 'Link: ' . $link . '<br>';
-                     // echo 'Price: ' . $price . '<br>';
-                      //echo 'Currency: ' . $currency . '<br>';
-                      //echo 'Availability: '. $availability . '<br>';
-                     // echo 'Shipping: '. $shippingFee . '<br>';
-                      //echo 'Shipping Message: ' . $shippingMessage . '<br>';
+                      echo 'Price: ' . $price . '<br>';
+                      echo 'Currency: ' . $currency . '<br>';
+                      echo 'Availability: '. $availability . '<br>';
+                     echo 'Shipping: '. $shippingFee . '<br>';
+                      echo 'Shipping Message: ' . $shippingMessage . '<br>';
 
-                     // echo 'Delivery Message: ' . $deliveryMessage . '<br>';
-                      //echo 'BB Seller: ' . $bbSeller . '<br>';
-                      //echo 'BB Link: ' . $bbSellerLink . '<br>';
+                      echo 'Delivery Message: ' . $deliveryMessage . '<br>';
+                      echo 'BB Seller: ' . $bbSeller . '<br>';
+                      echo 'BB Link: ' . $bbSellerLink . '<br>';
 
-                      //echo 'Description: ' . $description . '<br>';
+                      echo 'Description: ' . $description . '<br>';
                       //echo 'Is A Plus: ' . $aPlus . '<br>';
                       //echo 'a Plus Description: ' . $aPlusDescription . '<br>';
                       //echo '<hr>';
            echo $asin;
+                  if($price == '.'){
+                          $price = 0;
+                      }
+                   if($price == 0){
+                          $currency = '-';
+                      }
 			if($bbSeller == '-' && $bbSellerLink == '-' && $price == 0 && $availability == '-' && $currency == '-' && $deliveryMessage == '-' && $shippingFee == '-' && $shippingMessage == '-' && $availability == '-'){
                         $scraper->recordNotFoundAsin($id, $table, $asin, $locale);
                         $scraper->updateAsin(array(
@@ -255,7 +315,7 @@ $data = array(
                            'ip' => addslashes($ip)
                       );
 
-
+var_dump($data);
                       $scraper->recordData($data, $table);
                       }
                   }else{
@@ -338,6 +398,17 @@ $data = array(
 
             if($deliveryMessage){
                 $deliveryMessage = trim($deliveryMessage->plaintext);
+             switch ($locale){
+                    case 'it':
+                        $deliveryMessage = str_replace('&nbsp;', ' ', $deliveryMessage);
+                        break;
+                    case 'de':
+                        $deliveryMessage = str_replace('Siehe Details.', '', $deliveryMessage);
+                        break;
+                    case 'uk':
+                        $deliveryMessage = str_replace('Details', '', $deliveryMessage);
+                        break;
+                }
             }else{
                 $deliveryMessage = '-';
             }
